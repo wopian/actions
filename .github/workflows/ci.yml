@@ -3,30 +3,28 @@ on:
   push:
 env:
   FORCE_COLOR: true
+  NODE_VERSION: 16
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16]
     outputs:
       extract_branch: ${{ steps.extract_branch.outputs.branch }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
       - name: Restore cache
         uses: actions/cache@v2
         with:
           path: |
             node_modules
             */*/node_modules
-          key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ matrix.os }}-yarn-
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
       - name: Get current branch
         id: extract_branch
         run: |
@@ -40,24 +38,21 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
       - name: Restore cache
         uses: actions/cache@v2
         with:
           path: |
             node_modules
             */*/node_modules
-          key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ matrix.os }}-yarn-
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
   deploy:
     name: Deploy
     # if: ${{ success() && github.event.repository.default_branch == needs.test.outputs.extract_branch }}

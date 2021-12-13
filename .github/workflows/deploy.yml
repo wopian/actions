@@ -19,20 +19,18 @@ on:
 
 env:
   FORCE_COLOR: true
+  NODE_VERSION: 16
 jobs:
   deploy:
     name: ${{ inputs.DEPLOY_TYPE }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
       - name: Restore yarn cache
         if: inputs.NPM_CLIENT == 'yarn'
         uses: actions/cache@v2
@@ -40,15 +38,15 @@ jobs:
           path: |
             node_modules
             */*/node_modules
-          key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: ${{ matrix.os }}-yarn-
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
       - name: Restore npm cache
         if: inputs.NPM_CLIENT == 'npm'
         uses: actions/cache@v2
         with:
           path: ~/.npm
-          key: ${{ matrix.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ matrix.os }}-npm-
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
       - name: Set install command
         id: install
         run: |
