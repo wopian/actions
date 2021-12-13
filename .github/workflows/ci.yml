@@ -5,7 +5,7 @@ env:
   FORCE_COLOR: true
 jobs:
   test:
-    name: Lint & Code Coverage
+    name: Lint & Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
