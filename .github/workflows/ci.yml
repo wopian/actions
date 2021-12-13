@@ -4,9 +4,8 @@ on:
 env:
   FORCE_COLOR: true
 jobs:
-  test:
-    name: Lint & Test
-    runs-on: ubuntu-latest
+  lint:
+    name: Lint
     strategy:
       matrix:
         node-version: [16]
@@ -37,17 +36,38 @@ jobs:
           else
             echo "::set-output name=branch::INVALID_EVENT_BRANCH_UNKNOWN"
           fi
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ matrix.os }}-yarn-
   deploy:
     name: Deploy
     if: ${{ success() && github.event.repository.default_branch == needs.test.outputs.extract_branch }}
-    needs: test
+    needs: [lint, test]
     uses: wopian/actions/.github/workflows/deploy.yml@master
     with:
       DEPLOY_DOMAIN: demo.example
   deploy-production:
     name: Deploy
     if: ${{ success() && github.event.repository.default_branch == needs.test.outputs.extract_branch }}
-    needs: [test, deploy]
+    needs: [deploy]
     uses: wopian/actions/.github/workflows/deploy.yml@master
     with:
       NPM_CLIENT: yarn
