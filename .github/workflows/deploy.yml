@@ -4,6 +4,7 @@ on:
     inputs:
       IS_DEV:
         required: false
+        type: boolean
         default: true
         description: "Whether development or production deployment"
       DEPLOY_DOMAIN:
