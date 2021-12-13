@@ -10,8 +10,8 @@ jobs:
     strategy:
       matrix:
         node-version: [16]
-      outputs:
-        extract_branch: ${{ steps.extract_branch.outputs.branch }}
+    outputs:
+      extract_branch: ${{ steps.extract_branch.outputs.branch }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
