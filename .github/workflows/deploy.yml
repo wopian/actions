@@ -5,9 +5,11 @@ on:
       IS_DEV:
         required: false
         default: true
+        type: boolean
         description: "Whether development or production deployment"
       DEPLOY_DOMAIN:
         required: true
+        type: string
         description: "The domain to deploy to"
 env:
   FORCE_COLOR: true
