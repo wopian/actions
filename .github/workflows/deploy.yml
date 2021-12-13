@@ -50,22 +50,22 @@ jobs:
           key: ${{ matrix.os }}-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ matrix.os }}-npm-
       - name: Set install command
-        id: install_command
+        id: install
         run: |
           if [[ "${{ inputs.NPM_CLIENT }}" == "npm" ]]; then
-            echo "::set-output name=install::npm ci"
+            echo "::set-output name=CMD::npm ci"
           else
-            echo "::set-output name=install::yarn install --immutable"
+            echo "::set-output name=CMD::yarn install --immutable"
           fi
       - name: Install dependencies
-        run: ${{ outputs.install_command }}
+        run: ${{ steps.install.outputs.CMD }}
       - name: Set build command
-        id: build_command
+        id: build
         run: |
           if [[ "${{ inputs.NPM_CLIENT }}" == "npm" ]]; then
-            echo "::set-output name=build::npm run build"
+            echo "::set-output name=CMD::npm run build"
           else
-            echo "::set-output name=build::yarn build"
+            echo "::set-output name=CMD::yarn build"
           fi
       - name: Build service
-        run: ${{ outputs.build_command }}
+        run: ${{ steps.build.outputs.CMD }}
