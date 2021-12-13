@@ -43,7 +43,4 @@ jobs:
     needs: test
     uses: wopian/actions/.github/workflows/deploy.yml@master
     with:
-      # IS_DEV: true
       DEPLOY_DOMAIN: demo.example
-    # secrets:
-      # DIGITAL_OCEAN_TOKEN: ${{ secrets.DIGITAL_OCEAN_TOKEN }}

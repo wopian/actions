@@ -2,20 +2,26 @@ name: Deployment
 on:
   workflow_call:
     inputs:
-      IS_DEV:
+      DEPLOY_TYPE:
         required: false
-        type: boolean
-        default: true
-        description: "Whether development or production deployment"
+        type: string
+        default: Development
+        description: Development or Production
       DEPLOY_DOMAIN:
         required: true
         type: string
-        description: "The domain to deploy to"
+        description: The domain to deploy to
+      NPM_CLIENT:
+        required: false
+        type: string
+        default: npm
+        description: npm or yarn
+
 env:
   FORCE_COLOR: true
 jobs:
   deploy:
-    name: Kubernetes ${{ inputs.IS_DEV }}
+    name: Kubernetes ${{ inputs.DEPLOY_TYPE }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,7 +33,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Restore cache
+      - name: Restore yarn cache
+        if: inputs.NPM_CLIENT == 'yarn'
         uses: actions/cache@v2
         with:
           path: |
@@ -35,3 +42,30 @@ jobs:
             */*/node_modules
           key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: ${{ matrix.os }}-yarn-
+      - name: Restore npm cache
+        if: inputs.NPM_CLIENT == 'npm'
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ matrix.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ matrix.os }}-npm-
+      - name: Set install command
+        id: install_command
+        run: |
+          if [[ "${{ inputs.NPM_CLIENT }}" == "npm" ]]; then
+            echo "::set-output name=install::npm ci"
+          else
+            echo "::set-output name=install::yarn install --immutable"
+          fi
+      - name: Install dependencies
+        run: ${{ outputs.install_command }}
+      - name: Set build command
+        id: build_command
+        run: |
+          if [[ "${{ inputs.NPM_CLIENT }}" == "npm" ]]; then
+            echo "::set-output name=build::npm run build"
+          else
+            echo "::set-output name=build::yarn build"
+          fi
+      - name: Build service
+        run: ${{ outputs.build_command }}
