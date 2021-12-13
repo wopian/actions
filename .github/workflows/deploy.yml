@@ -16,7 +16,7 @@ env:
   IS_DEV: $(if [inputs.IS_DEV -eq true ]; then echo "Development"; fi)
 jobs:
   deploy:
-    name: Kubernetes $(if [inputs.IS_DEV -eq true ]; then echo "Development"; fi)
+    name: Kubernetes {{ env.IS_DEV }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
