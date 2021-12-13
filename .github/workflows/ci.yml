@@ -45,5 +45,5 @@ jobs:
     with:
       # IS_DEV: true
       DEPLOY_DOMAIN: demo.example
-    secrets:
+    # secrets:
       # DIGITAL_OCEAN_TOKEN: ${{ secrets.DIGITAL_OCEAN_TOKEN }}
