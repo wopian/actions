@@ -42,7 +42,7 @@ jobs:
     if: ${{ success() && github.event.repository.default_branch == needs.test.outputs.extract_branch }}
     needs: test
     uses: wopian/actions/.github/workflows/deploy.yml@master
-    inputs:
+    with:
       # IS_DEV: true
       DEPLOY_DOMAIN: demo.example
     secrets:
