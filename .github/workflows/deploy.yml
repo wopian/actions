@@ -1,0 +1,35 @@
+name: Deployment
+on:
+  workflow_call:
+    inputs:
+      IS_DEV:
+        required: false
+        default: true
+        description: "Whether development or production deployment"
+      DEPLOY_DOMAIN:
+        required: true
+        description: "The domain to deploy to"
+env:
+  FORCE_COLOR: true
+jobs:
+  deploy:
+    name: Kubernetes ${{ if [inputs.IS_DEV -eq true ]; then echo "Development"; fi}}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ matrix.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: ${{ matrix.os }}-yarn-
