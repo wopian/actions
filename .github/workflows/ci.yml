@@ -61,7 +61,7 @@ jobs:
   deploy:
     name: Deploy
     if: ${{ success() && github.event.repository.default_branch == needs.test.outputs.extract_branch }}
-    needs: [lint, test]
+    needs: [lint,test]
     uses: wopian/actions/.github/workflows/deploy.yml@master
     with:
       DEPLOY_DOMAIN: demo.example
