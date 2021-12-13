@@ -5,7 +5,6 @@ on:
       IS_DEV:
         required: false
         default: true
-        type: boolean
         description: "Whether development or production deployment"
       DEPLOY_DOMAIN:
         required: true
@@ -13,10 +12,9 @@ on:
         description: "The domain to deploy to"
 env:
   FORCE_COLOR: true
-  IS_DEV: $(if [inputs.IS_DEV -eq true ]; then echo "Development"; fi)
 jobs:
   deploy:
-    name: Kubernetes ${{ env.IS_DEV }}
+    name: Kubernetes ${{ inputs.IS_DEV }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
