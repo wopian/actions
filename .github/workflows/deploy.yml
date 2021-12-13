@@ -13,9 +13,10 @@ on:
         description: "The domain to deploy to"
 env:
   FORCE_COLOR: true
+  IS_DEV: $(if [inputs.IS_DEV -eq true ]; then echo "Development"; fi)
 jobs:
   deploy:
-    name: Kubernetes ${{ if [inputs.IS_DEV -eq true ]; then echo "Development"; fi}}
+    name: Kubernetes $(if [inputs.IS_DEV -eq true ]; then echo "Development"; fi)
     runs-on: ubuntu-latest
     strategy:
       matrix:
