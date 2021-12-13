@@ -6,6 +6,7 @@ env:
 jobs:
   lint:
     name: Lint
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [16]
