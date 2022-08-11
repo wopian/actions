@@ -33,7 +33,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Restore yarn cache
         if: inputs.NPM_CLIENT == 'yarn'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             node_modules
@@ -42,7 +42,7 @@ jobs:
           restore-keys: ${{ runner.os }}-yarn-
       - name: Restore npm cache
         if: inputs.NPM_CLIENT == 'npm'
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
